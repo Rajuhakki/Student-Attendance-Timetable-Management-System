@@ -1,0 +1,9 @@
+{
+  "semester": 1,
+  "className": "Test Class",
+  "dayOfWeek": 1,
+  "startTime": "09:00",
+  "endTime": "10:00",
+  "subject": "Test Subject",
+  "faculty": "Test Faculty"
+}

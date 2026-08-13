@@ -1,0 +1,203 @@
+================================================================================
+STUDENT ATTENDANCE & TIMETABLE MANAGEMENT SYSTEM - COMPLETE PROJECT DOCUMENTATION
+================================================================================
+
+1. PROJECT OVERVIEW
+--------------------------------------------------------------------------------
+Project Name: Student Attendance & Timetable Management System
+Platform: Cross-Platform (Android, iOS, Web, Windows/macOS/Linux Desktop)
+Primary Language: Dart (Flutter Frontend) & JavaScript (Node.js Backend)
+Target Audience: Academic Institutions, Faculty Members, Students, and Administrators
+
+Managing manual attendance registers and paper-based timetables is time-consuming 
+and prone to data loss or manipulation. This application digitizes hourly classroom 
+attendance tracking for faculty while empowering administrators with centralized 
+schedule management. It features AI-powered OCR timetable scanning using Google 
+Gemini AI, GPS-verified campus geofencing for attendance logging, and dual offline/cloud 
+data persistence.
+
+
+2. KEY FEATURES & FUNCTIONALITIES
+--------------------------------------------------------------------------------
+[A] GPS-Verified Attendance Logging:
+  - Ensures faculty can only log hourly classroom attendance when physically inside 
+    the campus perimeter using device GPS coordinates.
+  - Captures headcount of students present, faculty name, section, department, date, 
+    and timestamp.
+  - Works offline first using SQLite, with seamless cloud backend syncing.
+
+[B] AI-Powered Timetable Scanning (OCR + Gemini AI):
+  - Ingests image photos of physical timetable sheets from camera or gallery.
+  - Extracts raw text using Google ML Kit Text Recognition on-device.
+  - Sends extracted text to Google Gemini 1.5 Pro/Flash to parse unstructured 
+    schedules into clean, structured JSON timetable data.
+  - Saves analyzed timetables persistently for quick view across departments.
+
+[C] Role-Based Access Control & Portals:
+  - Admin Portal: Protected by passkey authentication to restrict schedule modification.
+  - Admin Features: Create, view, update, delete schedules by semester (Sem 1 - Sem 8), 
+    manage department timetables, purge database entries, view live records.
+  - Faculty/User Portal: View daily & weekly class schedules, record attendance, 
+    upload department timetables.
+
+[D] Multi-Department & Multi-Semester Management:
+  - Support for multiple academic departments (CSE, ECE, ME, CE, ISE, AI/ML, etc.).
+  - Categorized timetable management per semester (Semesters 1 through 8).
+
+[E] Dual Storage & Hybrid Sync:
+  - Local Database: SQLite (`sqflite` & `sqflite_common_ffi`) for fast client performance.
+  - Cloud Database: Node.js REST API integrated with MongoDB for remote cloud access.
+
+
+3. TECHNICAL STACK & DEPENDENCIES
+--------------------------------------------------------------------------------
+FRONTEND (FLUTTER / DART):
+  - Framework: Flutter SDK >= 3.12.0
+  - Language: Dart
+  - State Management: Provider (MultiProvider pattern)
+  - Local Database: sqflite (^2.3.0), sqflite_common_ffi (^2.3.0+2)
+  - Cloud DB Driver: mongo_dart (^0.10.5)
+  - Text Recognition: google_mlkit_text_recognition (^0.11.0)
+  - Generative AI: google_generative_ai (^0.2.2)
+  - Media & Utility: image_picker (^1.0.4), path (^1.8.3), path_provider (^2.1.1), intl (^0.19.0)
+  - Configuration: flutter_dotenv (^6.0.0), http (^1.6.0)
+
+BACKEND (NODE.JS & EXPRESS):
+  - Runtime: Node.js (v18+ recommended)
+  - Framework: Express.js (^4.18.2)
+  - Database Driver: MongoDB Native Driver (^7.0.0)
+  - Middleware: CORS (^2.8.5), dotenv (^16.0.3)
+  - Development Tools: nodemon (^2.0.20)
+
+
+4. PROJECT DIRECTORY STRUCTURE
+--------------------------------------------------------------------------------
+demo/
+│
+├── assets/
+│   └── .env                            # Environment variables (API Key, Backend URL)
+│
+├── backend/                            # Node.js REST API Server
+│   ├── package.json                    # Backend dependencies & npm scripts
+│   ├── package-lock.json
+│   ├── .env                            # Backend env (MONGODB_URI, PORT)
+│   └── server.js                       # Express server endpoints & MongoDB connection
+│
+├── lib/
+│   ├── main.dart                       # Application entrypoint & MultiProvider setup
+│   ├── main_test.dart
+│   │
+│   ├── config/                         # App-wide API & network configs
+│   │
+│   ├── models/                         # Data Schemas & Database Handlers
+│   │   ├── attendance.dart             # Attendance data model
+│   │   ├── database_helper.dart        # Core DB helper interface
+│   │   ├── database_helper_io.dart     # Mobile/Desktop SQLite implementation
+│   │   └── database_helper_web.dart    # Web SQLite fallback implementation
+│   │
+│   ├── providers/                      # Reactive State Management
+│   │   ├── attendance_provider.dart    # Attendance state management
+│   │   ├── schedule_provider.dart      # Timetable & Schedule state management
+│   │   └── timetable_photo_provider.dart# Uploaded timetable photo state
+│   │
+│   ├── screens/                        # UI Screen Views
+│   │   ├── home_screen.dart            # Main app navigation landing page
+│   │   ├── user_dashboard_screen.dart  # Faculty dashboard & overview
+│   │   ├── admin_passkey_screen.dart   # Passkey authentication for Admin portal
+│   │   ├── admin_class_selection_screen.dart
+│   │   ├── record_attendance_screen.dart # GPS check-in & student entry form
+│   │   ├── record_attendance_form_screen.dart
+│   │   ├── view_attendance_screen.dart # Attendance logs & search filters
+│   │   ├── timetable_upload_screen.dart# Image pick & OCR scan screen
+│   │   ├── analyzed_timetable_screen.dart# Gemini AI structured timetable table view
+│   │   ├── schedule_management_screen.dart # Admin timetable management
+│   │   ├── unified_timetable_screen.dart # Unified timetable view
+│   │   ├── department_selection_screen.dart
+│   │   ├── department_schedule_management_screen.dart
+│   │   ├── department_timetable_screen.dart
+│   │   ├── semester_selection_screen.dart
+│   │   ├── current_schedule_screen.dart
+│   │   ├── faculty_class_selection_screen.dart
+│   │   ├── faculty_department_view_screen.dart
+│   │   ├── photo_upload_screen.dart
+│   │   ├── timetable_entry_screen.dart
+│   │   └── timetable_table_view_screen.dart
+│   │
+│   └── services/                       # External Service Integrations
+│       ├── mongodb_service.dart        # Direct MongoDB client service
+│       └── mongodb_test.dart
+│
+├── screenshots/                        # Screenshots for documentation
+├── CAMPUS_COORDINATES.md               # Geofencing configuration documentation
+├── GEMINI_API_KEY_SETUP.md             # AI setup documentation
+├── README.md                           # GitHub Markdown Documentation
+├── PROJECT_DETAILS.txt                 # Complete Text Documentation (This file)
+├── pubspec.yaml                        # Flutter package configuration
+└── pubspec.lock                        # Locked dependencies version tree
+
+
+5. CONFIGURATION & ENVIRONMENT SETUP
+--------------------------------------------------------------------------------
+[1] GOOGLE GEMINI AI SETUP:
+    - Step 1: Obtain an API key from Google AI Studio (https://aistudio.google.com/).
+    - Step 2: Set the key in `assets/.env`:
+        GEMINI_API_KEY=your_actual_api_key_here
+    - Step 3: Or configure directly in `lib/config/api_config.dart`.
+    - Purpose: Converts OCR text extracted from timetable photos into structured JSON.
+
+[2] CAMPUS GPS GEOFENCING SETUP:
+    - Located in `lib/screens/record_attendance_screen.dart`:
+        static const double COLLEGE_LATITUDE = 12.9716;
+        static const double COLLEGE_LONGITUDE = 77.5946;
+        static const double ALLOWED_RADIUS_METERS = 1000.0; // 1km radius
+    - Update latitude and longitude to your institution's center point.
+
+[3] BACKEND SERVER ENVIRONMENT (`backend/.env`):
+    - File location: `backend/.env`
+        MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/?appName=Cluster0
+        PORT=3002
+
+
+6. REST API ENDPOINTS (NODE.JS BACKEND)
+--------------------------------------------------------------------------------
+Base URL: http://localhost:3002/api
+
+SCHEDULE ENDPOINTS:
+  - GET    /api/schedules/semester/:semester  -> Fetch all schedules for a specific semester
+  - POST   /api/schedules                     -> Create a new schedule entry
+  - PUT    /api/schedules/:id                 -> Update an existing schedule by ID
+  - DELETE /api/schedules/:id                 -> Delete a specific schedule entry by ID
+  - DELETE /api/schedules/semester/:semester  -> Delete all schedules for a given semester
+
+TIMETABLE PHOTO ENDPOINTS:
+  - GET    /api/timetable-photos              -> Fetch all uploaded timetable photos
+  - GET    /api/timetable-photos/:department/:semester -> Filter timetable photos
+  - POST   /api/timetable-photos              -> Upload new timetable photo record
+  - PUT    /api/timetable-photos/:id          -> Update timetable photo record
+  - DELETE /api/timetable-photos/:id          -> Delete a timetable photo record
+
+SYSTEM HEALTH:
+  - GET    /health                            -> Returns server status ("OK") & timestamp
+
+
+7. HOW TO RUN THE PROJECT
+--------------------------------------------------------------------------------
+STEP 1: Run the Backend REST API Server
+  1. Open terminal and navigate to backend directory:
+     cd backend
+  2. Install dependencies:
+     npm install
+  3. Start the server:
+     npm start   (or 'npm run dev' for nodemon live-reload)
+  4. Server starts listening on http://localhost:3002
+
+STEP 2: Run the Flutter Mobile / Web App
+  1. Open a new terminal in the root project directory (`demo/`).
+  2. Get dependencies:
+     flutter pub get
+  3. Launch the app on your preferred target (emulator, web, or desktop):
+     flutter run
+
+================================================================================
+END OF PROJECT DOCUMENTATION
+================================================================================
